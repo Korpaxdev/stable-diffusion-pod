@@ -71,7 +71,7 @@ def run_inference(inference_request: dict):
         "cfg_scale": 7,
         "denoising_strength": 0,
         "model": "inswapper_128.onnx",
-        "device": "CPU",
+        "device": "cuda",
         "det_thresh": 0.5,
         "det_maxnum": 0,
     }
