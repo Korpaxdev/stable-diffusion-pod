@@ -48,6 +48,9 @@ RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/model.safetensors \
 RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/preprocessor_config.json \
     https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/preprocessor_config.json
 
+# Подготовка окружения для stable-diffusion
+RUN python -c "from launch import prepare_environment; prepare_environment()" --skip-torch-cuda-test --xformers
+
 # Установка зависимостей для обработчика
 COPY requirements.txt .
 RUN uv pip install -r requirements.txt --system
@@ -60,8 +63,5 @@ COPY start.sh .
 # Установка разрешений на скрипты
 RUN chmod +x start.sh
 
-# Подготовка окружения для stable-diffusion
-RUN python -c "from launch import prepare_environment; prepare_environment()" --skip-torch-cuda-test --xformers
-
-# Запуск скрипта запуска
-CMD ["./start.sh"]
+# Запуск скрипта
+# CMD ["./start.sh"]
