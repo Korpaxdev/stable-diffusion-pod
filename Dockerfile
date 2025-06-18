@@ -20,7 +20,7 @@ WORKDIR /stable-diffusion-webui
 RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git  .
 
 # Установка зависимостей для stable-diffusion-webui
-RUN uv pip install -r requirements.txt --system
+RUN uv pip install -r requirements_versions.txt --system
 
 # Установка gdown
 RUN uv pip install gdown --system
@@ -33,6 +33,25 @@ RUN git clone https://github.com/Korpaxdev/sd-webui-reactor-sfw ./extensions/sd-
 RUN cd ./extensions/sd-webui-reactor-sfw && uv pip install -r requirements.txt --system && \
     uv pip install onnxruntime --system
 
-RUN chmod +x start.sh
+# Скачивание модели buffalo_l для insightface
+RUN mkdir -p ./models/insightface/models/buffalo_l
+RUN wget -q -O ./models/insightface/models/buffalo_l/buffalo_l.zip \
+    https://github.com/deepinsight/insightface/releases/download/v0.7/buffalo_l.zip && \
+    unzip ./models/insightface/models/buffalo_l/buffalo_l.zip -d ./models/insightface/models/buffalo_l/ && \
+    rm /stable-diffusion-webui/models/insightface/models/buffalo_l/buffalo_l.zip
 
-CMD ["./start.sh"]
+RUN mkdir -p ./models/nsfw_detector/vit-base-nsfw-detector
+RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/config.json \
+    https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/config.json
+RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/confusion_matrix.png \
+    https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/confusion_matrix.png
+RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/model.safetensors \
+    https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/model.safetensors
+RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/preprocessor_config.json \
+    https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/preprocessor_config.json
+
+RUN python -c "from launch import prepare_environment; prepare_environment()" --skip-torch-cuda-test
+
+# RUN chmod +x start.sh
+
+# CMD ["./start.sh"]

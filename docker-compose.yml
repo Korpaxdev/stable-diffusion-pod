@@ -1,0 +1,28 @@
+services:
+  sd:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 7860:7860
+    command:
+      [
+        "python",
+        "launch.py",
+        "--listen",
+        "--port",
+        "7860",
+        "--api",
+        "--skip-torch-cuda-test",
+        "--xformers",
+        "--disable-model-loading-ram-optimization",
+        "--enable-insecure-extension-access",
+        "--no-half-vae",
+        "--opt-split-attention",
+        "--disable-console-progressbars",
+        "--skip-version-check",
+        "--no-half-vae",
+        "--precision",
+        "full",
+      ]
+    # platform: linux/amd64
