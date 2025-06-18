@@ -35,32 +35,12 @@ def wait_for_service(url):
         time.sleep(0.2)
 
 
-def change_model(model_name):
-    """
-    Change the current model checkpoint.
-    """
-    try:
-        payload = {"sd_model_checkpoint": model_name}
-        response = automatic_session.post(url=f"{LOCAL_URL}/options", json=payload, timeout=60)
-
-        if response.status_code == 200:
-            # Даем время на загрузку модели
-            time.sleep(5)
-            return True
-        else:
-            print(f"Failed to change model: {response.status_code} - {response.text}")
-            return False
-    except Exception as e:
-        print(f"Error changing model: {e}")
-        return False
-
-
 def get_available_models():
     """
     Get list of available models.
     """
     try:
-        response = automatic_session.get(f"{LOCAL_URL}/sd-models", timeout=30)
+        response = automatic_session.get(f"{LOCAL_URL}/sdapi/v1/sd-models", timeout=30)
         if response.status_code == 200:
             models = response.json()
             return [model["title"] for model in models]
