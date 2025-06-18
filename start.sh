@@ -26,6 +26,5 @@ sleep 10
 
 echo "Starting RunPod handler..."
 
-# # Переходим обратно в корневую директорию и запускаем обработчик
-# cd /
-# python handler.py
+# Запускаем обработчик
+python handler.py

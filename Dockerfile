@@ -19,9 +19,6 @@ WORKDIR /stable-diffusion-webui
 # Клонирование репозитория для stable-diffusion-webui
 RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git  .
 
-# Установка зависимостей для stable-diffusion-webui
-RUN uv pip install -r requirements_versions.txt --system
-
 # Установка gdown
 RUN uv pip install gdown --system
 
@@ -40,6 +37,7 @@ RUN wget -q -O ./models/insightface/models/buffalo_l/buffalo_l.zip \
     unzip ./models/insightface/models/buffalo_l/buffalo_l.zip -d ./models/insightface/models/buffalo_l/ && \
     rm /stable-diffusion-webui/models/insightface/models/buffalo_l/buffalo_l.zip
 
+# Скачивание модели nsfw_detector для stable-diffusion
 RUN mkdir -p ./models/nsfw_detector/vit-base-nsfw-detector
 RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/config.json \
     https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/config.json
@@ -50,8 +48,20 @@ RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/model.safetensors \
 RUN wget -q -O ./models/nsfw_detector/vit-base-nsfw-detector/preprocessor_config.json \
     https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/main/preprocessor_config.json
 
-RUN python -c "from launch import prepare_environment; prepare_environment()" --skip-torch-cuda-test
+# Установка зависимостей для обработчика
+COPY requirements.txt .
+RUN uv pip install -r requirements.txt --system
 
-# RUN chmod +x start.sh
+# Копирование обработчика
+COPY handler.py .
+# Копирование скрипта запуска
+COPY start.sh .
 
-# CMD ["./start.sh"]
+# Установка разрешений на скрипты
+RUN chmod +x start.sh
+
+# Подготовка окружения для stable-diffusion
+RUN python -c "from launch import prepare_environment; prepare_environment()" --skip-torch-cuda-test --xformers
+
+# Запуск скрипта запуска
+CMD ["./start.sh"]
