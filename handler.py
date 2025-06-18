@@ -4,6 +4,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 
 LOCAL_URL = "http://127.0.0.1:7860"  # Стандартный порт A1111
+API_URL = f"{LOCAL_URL}/sdapi/v1"
 
 
 automatic_session = requests.Session()
@@ -40,7 +41,7 @@ def get_available_models():
     Get list of available models.
     """
     try:
-        response = automatic_session.get(f"{LOCAL_URL}/sdapi/v1/sd-models", timeout=30)
+        response = automatic_session.get(f"{API_URL}/sd-models", timeout=30)
         if response.status_code == 200:
             models = response.json()
             return [model["title"] for model in models]
@@ -74,7 +75,7 @@ def run_inference(inference_request: dict):
         "det_thresh": 0.5,
         "det_maxnum": 0,
     }
-    result = requests.post(f"{LOCAL_URL}/reactor/image", json=body)
+    result = automatic_session.post(f"{LOCAL_URL}/reactor/image", json=body)
     return result.json()
 
 
@@ -96,7 +97,7 @@ def handler(event):
 
 if __name__ == "__main__":
     print("Waiting for WebUI API Service...")
-    wait_for_service(url=f"{LOCAL_URL}/sd-models")
+    wait_for_service(url=f"{API_URL}/sd-models")
 
     print("WebUI API Service is ready.")
     print("Available models:")
