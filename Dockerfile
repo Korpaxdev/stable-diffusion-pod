@@ -64,4 +64,4 @@ COPY start.sh .
 RUN chmod +x start.sh
 
 # Запуск скрипта
-# CMD ["./start.sh"]
+CMD ["./start.sh"]
