@@ -11,6 +11,7 @@ python launch.py \
   --port 7860 \
   --api \
   --skip-torch-cuda-test \
+  --skip-install \
   --xformers \
   --disable-model-loading-ram-optimization \
   --enable-insecure-extension-access \
